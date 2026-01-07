@@ -1,8 +1,9 @@
 <script setup lang="ts">
+  import ShopView from './components/ShopView.vue';
 </script>
 
 <template>
-  <div></div>
+  <ShopView />
 </template>
 
 <style scoped>
