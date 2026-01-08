@@ -15,6 +15,7 @@
      products: Product[];
      cart: CartItem[];
      currentView: ViewName;
+      error: string | null;
    }
    export interface ErrorState {
       error: string | null;

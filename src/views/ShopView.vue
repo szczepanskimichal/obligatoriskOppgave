@@ -3,12 +3,18 @@ import { onMounted } from 'vue';
 import ProductList from '../components/ProductList.vue';
 import ShopHeader from '../components/ShopHeader.vue';
 import { useShopStore } from '../stores/shop';
+import type { Product } from '../types';
 
 const shop = useShopStore();
 
 onMounted(() => {
   shop.loadProducts();
 });
+
+function handlerAddToCart(product: Product) {
+  shop.addToCart(product);
+  console.log(`Produktet "${product.name}" ble lagt til i handlevognen.`);
+}
 </script>
 
 <template>
@@ -16,7 +22,8 @@ onMounted(() => {
     <ShopHeader />
 
     <main>
-      <ProductList :products="shop.products" />
+      <ProductList :products="shop.products" 
+      @add-to-cart="handlerAddToCart" />
     </main>
   </div>
 </template>

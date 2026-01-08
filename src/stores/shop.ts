@@ -10,6 +10,8 @@ export const useShopStore = defineStore('shop', {
   }),
   getters: {
   currentProducts: (state) => state.products,
+  cartItemCount : (state) => state.cart.reduce((total, item) => total + item.quantity, 0),
+  totalCartPrice: (state) => state.cart.reduce((total, item) => total + item.price * item.quantity, 0),
   },
   actions: {
     setProducts(products: Product[]) {},
@@ -27,6 +29,14 @@ export const useShopStore = defineStore('shop', {
       console.error("Error loading products:", message);
     }
   },
+  addToCart(product: Product) {
+      const existingItem = this.cart.find(item => item.id === product.id);
+      if(existingItem){
+        existingItem.quantity +=1;
+      }else{
+        this.cart.push({...product, quantity: 1});
+      }
+      }
   },
 });
 

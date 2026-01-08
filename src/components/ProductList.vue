@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { Product } from '../types';
 import { useRouter } from 'vue-router';
+import { useShopStore } from '../stores/shop';
+const shop = useShopStore();
 
 interface Props {
   products: Product[];
@@ -8,6 +10,15 @@ interface Props {
 const props = defineProps<Props>();
 
 const router = useRouter();
+const emit = defineEmits<{
+  (e: 'view-details', id: number): void;
+  (e: 'add-to-cart', product: Product): void;
+}>();
+
+function handlerAddToCart(product: Product) {
+ emit('add-to-cart', product);
+ console.log('Aktualt produkt lagt til i handlevogn:', shop.cart);
+}
 
 function goToDetails(id: number) {
   router.push({ name: 'product-detail', params: { id } });
@@ -26,7 +37,7 @@ function goToDetails(id: number) {
         <img :src="product.image" :alt="product.name" />
         <h3>{{ product.name }}</h3>
         <p>{{ product.price }} NOK</p>
-        <button class="btn" >
+        <button class="btn" @click="handlerAddToCart(product)" >
           Legg i handlevogn
         </button>
         <button class="btn btn-secondary" @click="goToDetails(product.id)">
