@@ -16,3 +16,6 @@
      cart: CartItem[];
      currentView: ViewName;
    }
+   export interface ErrorState {
+      error: string | null;
+    }

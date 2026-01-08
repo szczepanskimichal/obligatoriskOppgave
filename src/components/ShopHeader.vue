@@ -1,10 +1,12 @@
+<script lang="js">
+</script>
 <template>
   <header class="header">
     <div class="header-content">
-      <div class="logo" href="#">Legacy Shop</div>
+      <div class="logo">Legacy Shop</div>
       <nav>
-        <a href="#">Produkter</a>
-        <a href="#">Handlekurv</a>
+        <RouterLink to="/">Produkter</RouterLink>
+        <RouterLink to="/cart">Handlekurv ({{ 0 }})</RouterLink>
       </nav>
     </div>
   </header>
