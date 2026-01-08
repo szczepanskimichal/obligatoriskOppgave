@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed } from 'vue';
 import { useShopStore } from '../stores/shop';
 import Cart from '../components/Cart.vue';
+import ShopHeader from '../components/ShopHeader.vue';
 
 const shop = useShopStore();
 
-onMounted(() => {
-  // Ensure products/cart are loaded if needed
-  if (shop.products.length > 0) {
-    shop.loadProducts();
-  } else if (shop.cart.length === 0) {
-    alert('Your cart is empty.');
-  } 
-});
-
 const cartItems = shop.cart;
-const cartTotal = computed(() => cartItems.reduce((total, item) => total + item.price * item.quantity, 0));
+const cartTotal = computed(() => 
+  shop.cart.reduce((total, item) => total + item.price * item.quantity, 0)
+);
+
+function handlerUpdateQuantity(itemId: number, newQuantity: number) {
+  shop.updateCartItemQuantity(itemId, newQuantity);
+}
+
+function handlerRemoveItem(itemId: number) {
+  shop.removeFromCart(itemId);
+}
 </script>
 
 <template>
@@ -23,7 +25,12 @@ const cartTotal = computed(() => cartItems.reduce((total, item) => total + item.
     <ShopHeader />
 
     <main>
-      <Cart :items="cartItems" :total="cartTotal" />
+      <Cart 
+        :items="cartItems" 
+        :total="cartTotal" 
+        @update-quantity="handlerUpdateQuantity"
+        @remove-item="handlerRemoveItem"
+      />
     </main>
   </div>
 </template>

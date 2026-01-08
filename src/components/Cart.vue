@@ -11,6 +11,9 @@ const props = defineProps<Props>();
 
 const emit = defineEmits<{
   (e: 'go-to-products'): void;
+  (e: 'update-quantity', itemId: number, newQuantity: number): void;
+  (e: 'remove-item', itemId: number): void;
+
 }>();
 
 const router = useRouter();
@@ -18,8 +21,15 @@ const router = useRouter();
 function goBack() {
   router.push('/');
 }
-
-
+function updateQuantity(itemId: number, quantity: number) {
+  emit('update-quantity', itemId, quantity);
+}
+function removeItem(itemId: number) {
+  emit('remove-item', itemId);
+}
+function checkout() {
+  alert('Checkout funksjonalitet er ikke implementert ennå.');
+}
 </script>
 
 <template>
@@ -42,7 +52,7 @@ function goBack() {
         </div>
         <div class="quantity-controls">
           <button
-            class="btn btn-small btn-minus"          >
+            class="btn btn-small btn-minus" @click="updateQuantity(item.id, item.quantity - 1)"         >
             -
           </button>
           <input
@@ -52,19 +62,19 @@ function goBack() {
             min="1"
           />
           <button
-            class="btn btn-small btn-plus"
+            class="btn btn-small btn-plus" @click="updateQuantity(item.id, item.quantity +1)"
           >
             +
           </button>
         </div>
-        <button class="btn btn-danger">
+        <button class="btn btn-danger" @click="removeItem(item.id)">
           Remove
         </button>
       </div>
     </div>
     <div class="cart-total">
       <h3>Total: {{ props.total }} NOK</h3>
-      <button class="btn" id="checkout" >Checkout</button>
+      <button class="btn" id="checkout" @click="checkout" >Checkout</button>
     </div>
   </section>
 </template>

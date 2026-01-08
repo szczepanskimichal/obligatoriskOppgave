@@ -1,4 +1,7 @@
-<script lang="js">
+<script setup lang="ts">
+import { useShopStore } from '../stores/shop';
+
+const shop = useShopStore();
 </script>
 <template>
   <header class="header">
@@ -6,7 +9,7 @@
       <div class="logo">Legacy Shop</div>
       <nav>
         <RouterLink to="/">Produkter</RouterLink>
-        <RouterLink to="/cart">Handlekurv ({{ 0 }})</RouterLink>
+        <RouterLink to="/cart">Handlekurv ({{ shop.cartItemCount }})</RouterLink>
       </nav>
     </div>
   </header>

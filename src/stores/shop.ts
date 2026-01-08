@@ -36,7 +36,21 @@ export const useShopStore = defineStore('shop', {
       }else{
         this.cart.push({...product, quantity: 1});
       }
+      },
+    updateCartItemQuantity(id: number, quantity: number) {
+      const item = this.cart.find(item => item.id === id);
+      if (item && quantity > 0) {
+        item.quantity = quantity;
+      } else if (item && quantity <= 0) {
+        this.removeFromCart(id);
       }
-  },
+    },
+    removeFromCart(id: number) {
+      const index = this.cart.findIndex(item => item.id === id);
+      if (index !== -1) {
+        this.cart.splice(index, 1);
+      }
+    },
+  }
 });
 
