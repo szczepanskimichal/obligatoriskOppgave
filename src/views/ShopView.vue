@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useShopStore } from '../stores/shop';
-import type { Product } from '../types';
 import ShopHeader from '../components/ShopHeader.vue';
 import ProductList from '../components/ProductList.vue';
 import Cart from '../components/Cart.vue';
@@ -13,34 +12,12 @@ const shop = useShopStore();
 
 onMounted(() => {
   shop.loadProducts();
+  shop.setCurrentRoute(route.name as string, route.params as Record<string, string>);
 });
 
-// Określ aktualny widok na podstawie route
-const currentView = computed(() => route.name);
-
-// Dla product details
-const currentProduct = computed(() => {
-  if (route.name === 'product-detail') {
-    const idParam = route.params.id as string;
-    return shop.getProductById(Number(idParam)) ?? null;
-  }
-  return null;
+watch(() => route.name, () => {
+  shop.setCurrentRoute(route.name as string, route.params as Record<string, string>);
 });
-
-const cartTotal = computed(() => shop.totalCartPrice);
-
-// Handlers
-function handleAddToCart(product: Product) {
-  shop.addToCart(product);
-}
-
-function handleUpdateQuantity(itemId: number, newQuantity: number) {
-  shop.updateCartItemQuantity(itemId, newQuantity);
-}
-
-function handleRemoveItem(itemId: number) {
-  shop.removeFromCart(itemId);
-}
 </script>
 
 <template>
@@ -49,25 +26,25 @@ function handleRemoveItem(itemId: number) {
     <main>
       <!-- Products View -->
       <ProductList 
-        v-if="currentView === 'products'"
+        v-if="shop.currentViewName === 'products'"
         :products="shop.products" 
-        @add-to-cart="handleAddToCart"
+        @add-to-cart="shop.addToCart"
       />
 
       <!-- Cart View -->
       <Cart 
-        v-else-if="currentView === 'cart'"
+        v-else-if="shop.currentViewName === 'cart'"
         :items="shop.cart" 
-        :total="cartTotal" 
-        @update-quantity="handleUpdateQuantity"
-        @remove-item="handleRemoveItem"
+        :total="shop.totalCartPrice" 
+        @update-quantity="shop.updateCartItemQuantity"
+        @remove-item="shop.removeFromCart"
       />
 
       <!-- Product Details View -->
       <ProductDetails 
-        v-else-if="currentView === 'product-detail'"
-        :product="currentProduct"
-        @add-to-cart="handleAddToCart"
+        v-else-if="shop.currentViewName === 'product-detail'"
+        :product="shop.currentProduct"
+        @add-to-cart="shop.addToCart"
       />
     </main>
   </div>
