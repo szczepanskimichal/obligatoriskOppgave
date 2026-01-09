@@ -12,7 +12,7 @@ const shop = useShopStore();
 
 const currentProduct = computed(() => {
   if (route.name === 'product-detail' && route.params.id) {
-    return shop.getProductById(Number(route.params.id));
+    return shop.getProductById(Number(route.params.id)) ?? null;
   }
   return null;
 });

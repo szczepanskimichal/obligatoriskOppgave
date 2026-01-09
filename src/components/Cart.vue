@@ -21,7 +21,17 @@ function goBack() {
 }
 
 function updateQuantity(itemId: number, quantity: number) {
-  emit('update-quantity', itemId, quantity);
+  if (quantity >= 1) {
+    emit('update-quantity', itemId, quantity);
+  }
+}
+
+function handleInput(itemId: number, event: Event) {
+  const target = event.target as HTMLInputElement;
+  const value = parseInt(target.value);
+  if (!isNaN(value) && value >= 1) {
+    updateQuantity(itemId, value);
+  }
 }
 
 function removeItem(itemId: number) {
@@ -60,7 +70,8 @@ function checkout() {
             type="number"
             class="quantity-input"
             :value="item.quantity"
-            min="1"
+            @input="handleInput(item.id, $event)"
+            readonly
           />
           <button
             class="btn btn-small btn-plus" @click="updateQuantity(item.id, item.quantity +1)"
@@ -113,6 +124,17 @@ a:hover {
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 0.25rem;
+}
+
+/* Remove arrows from number input */
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.quantity-input[type=number] {
+  -moz-appearance: textfield;
 }
 .btn-small {
   padding: 0.25rem 0.5rem;
