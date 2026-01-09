@@ -2,6 +2,7 @@ import { defineStore } from "pinia"
 import { ref, computed, watch } from 'vue'
 import type { CartItem, Product } from "../types"
 import { storageService } from '../services/storageService'
+import { productService } from '../services/productService'
 
 export const useShopStore = defineStore('shop', () => {
   // State
@@ -43,16 +44,11 @@ export const useShopStore = defineStore('shop', () => {
   // Actions
   async function loadProducts() {
     try {
-      const response = await fetch('/products.json')
-      if (!response.ok) {
-        throw new Error(`Failed to load products: ${response.status} ${response.statusText}`)
-      }
-      const data: Product[] = await response.json()
+      const data = await productService.fetchProducts()
       products.value = data
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err)
       error.value = message
-      console.error("Error loading products:", message)
     }
   }
 
@@ -82,7 +78,7 @@ export const useShopStore = defineStore('shop', () => {
   }
 
   function getProductById(id: number): Product | undefined {
-    return products.value.find(p => p.id === id)
+    return productService.findProductById(products.value, id)
   }
 
   function setCurrentRoute(name: string, params: Record<string, string> = {}) {
