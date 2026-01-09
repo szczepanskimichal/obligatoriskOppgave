@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { Product } from '../types';
 import { useRouter } from 'vue-router';
-import { useShopStore } from '../stores/shop';
-const shop = useShopStore();
 
 interface Props {
   products: Product[];
@@ -17,7 +15,6 @@ const emit = defineEmits<{
 
 function handlerAddToCart(product: Product) {
  emit('add-to-cart', product);
- console.log('Aktualt produkt lagt til i handlevogn:', shop.cart);
 }
 
 function goToDetails(id: number) {

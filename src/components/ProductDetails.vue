@@ -1,33 +1,21 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useShopStore } from '../stores/shop';
+import { useRouter } from 'vue-router';
 import type { Product } from '../types';
-import ShopHeader from './ShopHeader.vue';
 
-const route = useRoute();
-const router = useRouter();
-const shop = useShopStore();
+interface Props {
+  product: Product | null;
+}
 
-onMounted(() => {
-  if (!shop.products.length) {
-    shop.loadProducts();
-  }
-});
-
-const product = computed <Product | null>(() => {
-  const idParam = route.params.id as string;  // husk om dette!!!
-  return shop.products.find(p => String(p.id) === idParam) ?? null;
-});
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
   (e: 'add-to-cart', product: Product): void;
 }>();
 
+const router = useRouter();
+
 function handlerAddToCart(product: Product) {
-// emit("add-to-cart", product);
-shop.addToCart(product);
- console.log('Aktualt produkt lagt til i handlevogn:', shop.cart);
+  emit('add-to-cart', product);
 }
 
 function goBack() {
@@ -35,24 +23,23 @@ function goBack() {
 }
 </script>
 <template>
-  <ShopHeader />
-  <section v-if="!product" class="container not-found">
+  <section v-if="!props.product" class="container not-found">
     <p>Produktet ble ikke funnet.</p>
     <button class="btn" @click="goBack">Tilbake til produkter</button>
   </section>
 
   <section v-else class="container detail">
     <div class="product-image">
-      <img :src="product.image" :alt="product.name" />
+      <img :src="props.product.image" :alt="props.product.name" />
     </div>
     <div class="product-info">
-      <h2>{{ product.name }}</h2>
-      <p class="price">{{ product.price }} NOK</p>
+      <h2>{{ props.product.name }}</h2>
+      <p class="price">{{ props.product.price }} NOK</p>
       <div class="description">
-        <p>Dette er en fantastisk {{ product.name.toLowerCase() }}.</p>
+        <p>Dette er en fantastisk {{ props.product.name.toLowerCase() }}.</p>
       </div>
       <div class="actions">
-        <button class="btn btn-primary" @click="handlerAddToCart(product)">
+        <button class="btn btn-primary" @click="handlerAddToCart(props.product)">
           Legg i handlevogn
         </button>
         <button class="btn btn-secondary" @click="goBack">

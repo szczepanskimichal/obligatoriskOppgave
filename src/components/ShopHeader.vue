@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { useShopStore } from '../stores/shop';
+interface Props {
+  cartCount: number;
+}
 
-const shop = useShopStore();
+const props = defineProps<Props>();
 </script>
 <template>
   <header class="header">
@@ -9,7 +11,7 @@ const shop = useShopStore();
       <div class="logo">Legacy Shop</div>
       <nav>
         <RouterLink to="/">Produkter</RouterLink>
-        <RouterLink to="/cart">Handlekurv ({{ shop.cartItemCount }})</RouterLink>
+        <RouterLink to="/cart">Handlekurv ({{ props.cartCount }})</RouterLink>
       </nav>
     </div>
   </header>

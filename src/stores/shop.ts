@@ -1,56 +1,84 @@
 import { defineStore } from "pinia"
-import  type {AppState, CartItem, Product, ViewName, ErrorState} from "../types"
+import { ref, computed } from 'vue'
+import type { CartItem, Product } from "../types"
 
-export const useShopStore = defineStore('shop', {
-  state: (): AppState => ({
-    products: [],
-    cart: [],
-    currentView: 'products',
-    error: null as string | null,
-  }),
-  getters: {
-  currentProducts: (state) => state.products,
-  cartItemCount : (state) => state.cart.reduce((total, item) => total + item.quantity, 0),
-  totalCartPrice: (state) => state.cart.reduce((total, item) => total + item.price * item.quantity, 0),
-  },
-  actions: {
-    setProducts(products: Product[]) {},
-    async loadProducts(){
-      try {
-      const response = await fetch('/products.json');
-      if(!response.ok){
-        throw new Error(`Failed to load products: ${response.status} ${response.statusText}`);
+export const useShopStore = defineStore('shop', () => {
+  // State
+  const products = ref<Product[]>([])
+  const cart = ref<CartItem[]>([])
+  const currentView = ref<'products' | 'cart'>('products')
+  const error = ref<string | null>(null)
+
+  // Getters
+  const currentProducts = computed(() => products.value)
+  const cartItemCount = computed(() => 
+    cart.value.reduce((total, item) => total + item.quantity, 0)
+  )
+  const totalCartPrice = computed(() => 
+    cart.value.reduce((total, item) => total + item.price * item.quantity, 0)
+  )
+
+  // Actions
+  async function loadProducts() {
+    try {
+      const response = await fetch('/products.json')
+      if (!response.ok) {
+        throw new Error(`Failed to load products: ${response.status} ${response.statusText}`)
       }
-      const data: Product[] = (await response.json() as Product[]);
-      this.products = data;
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      this.error = message;
-      console.error("Error loading products:", message);
+      const data: Product[] = await response.json()
+      products.value = data
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      error.value = message
+      console.error("Error loading products:", message)
     }
-  },
-  addToCart(product: Product) {
-      const existingItem = this.cart.find(item => item.id === product.id);
-      if(existingItem){
-        existingItem.quantity +=1;
-      }else{
-        this.cart.push({...product, quantity: 1});
-      }
-      },
-    updateCartItemQuantity(id: number, quantity: number) {
-      const item = this.cart.find(item => item.id === id);
-      if (item && quantity > 0) {
-        item.quantity = quantity;
-      } else if (item && quantity <= 0) {
-        this.removeFromCart(id);
-      }
-    },
-    removeFromCart(id: number) {
-      const index = this.cart.findIndex(item => item.id === id);
-      if (index !== -1) {
-        this.cart.splice(index, 1);
-      }
-    },
   }
-});
+
+  function addToCart(product: Product) {
+    const existingItem = cart.value.find(item => item.id === product.id)
+    if (existingItem) {
+      existingItem.quantity += 1
+    } else {
+      cart.value.push({ ...product, quantity: 1 })
+    }
+  }
+
+  function updateCartItemQuantity(id: number, quantity: number) {
+    const item = cart.value.find(item => item.id === id)
+    if (item && quantity > 0) {
+      item.quantity = quantity
+    } else if (item && quantity <= 0) {
+      removeFromCart(id)
+    }
+  }
+
+  function removeFromCart(id: number) {
+    const index = cart.value.findIndex(item => item.id === id)
+    if (index !== -1) {
+      cart.value.splice(index, 1)
+    }
+  }
+
+  function getProductById(id: number): Product | undefined {
+    return products.value.find(p => p.id === id)
+  }
+
+  return {
+    // State
+    products,
+    cart,
+    currentView,
+    error,
+    // Getters
+    currentProducts,
+    cartItemCount,
+    totalCartPrice,
+    // Actions
+    loadProducts,
+    addToCart,
+    updateCartItemQuantity,
+    removeFromCart,
+    getProductById,
+  }
+})
 

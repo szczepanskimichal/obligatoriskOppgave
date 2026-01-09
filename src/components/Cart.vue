@@ -10,10 +10,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  (e: 'go-to-products'): void;
   (e: 'update-quantity', itemId: number, newQuantity: number): void;
   (e: 'remove-item', itemId: number): void;
-
 }>();
 
 const router = useRouter();
@@ -21,12 +19,15 @@ const router = useRouter();
 function goBack() {
   router.push('/');
 }
+
 function updateQuantity(itemId: number, quantity: number) {
   emit('update-quantity', itemId, quantity);
 }
+
 function removeItem(itemId: number) {
   emit('remove-item', itemId);
 }
+
 function checkout() {
   alert('Checkout funksjonalitet er ikke implementert ennå.');
 }
