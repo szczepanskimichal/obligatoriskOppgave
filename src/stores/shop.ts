@@ -1,15 +1,21 @@
 import { defineStore } from "pinia"
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { CartItem, Product } from "../types"
+import { storageService } from '../services/storageService'
 
 export const useShopStore = defineStore('shop', () => {
   // State
   const products = ref<Product[]>([])
-  const cart = ref<CartItem[]>([])
+  const cart = ref<CartItem[]>(storageService.loadCart())
   const currentView = ref<'products' | 'cart'>('products')
   const error = ref<string | null>(null)
   const currentRouteName = ref<string>('products')
   const currentRouteParams = ref<Record<string, string>>({})
+
+  // Watch cart and save to localStorage
+  watch(cart, (newCart) => {
+    storageService.saveCart(newCart)
+  }, { deep: true })
 
   // Getters
   const currentProducts = computed(() => products.value)
