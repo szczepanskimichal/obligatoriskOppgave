@@ -1,43 +1,15 @@
 import { defineStore } from "pinia"
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import type { CartItem, Product } from "../types"
 
-const CART_STORAGE_KEY = 'shop_cart'
-
 export const useShopStore = defineStore('shop', () => {
-  // Helper functions for localStorage
-  const loadCart = (): CartItem[] => {
-    try {
-      const stored = localStorage.getItem(CART_STORAGE_KEY)
-      if (stored) {
-        return JSON.parse(stored) as CartItem[]
-      }
-    } catch (error) {
-      console.error('Failed to load cart from localStorage:', error)
-    }
-    return []
-  }
-
-  const saveCart = (cart: CartItem[]): void => {
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart))
-    } catch (error) {
-      console.error('Failed to save cart to localStorage:', error)
-    }
-  }
-
   // State
   const products = ref<Product[]>([])
-  const cart = ref<CartItem[]>(loadCart())
+  const cart = ref<CartItem[]>([])
   const currentView = ref<'products' | 'cart'>('products')
   const error = ref<string | null>(null)
   const currentRouteName = ref<string>('products')
   const currentRouteParams = ref<Record<string, string>>({})
-
-  // Watch cart and save to localStorage
-  watch(cart, (newCart) => {
-    saveCart(newCart)
-  }, { deep: true })
 
   // Getters
   const currentProducts = computed(() => products.value)
