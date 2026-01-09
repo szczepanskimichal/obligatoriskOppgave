@@ -6,14 +6,9 @@ export const useShopStore = defineStore('shop', () => {
   // State
   const products = ref<Product[]>([])
   const cart = ref<CartItem[]>([])
-  const currentView = ref<'products' | 'cart'>('products')
   const error = ref<string | null>(null)
-  const currentRouteName = ref<string>('products')
-  const currentRouteParams = ref<Record<string, string>>({})
 
   // Getters
-  const currentProducts = computed(() => products.value)
-  
   const cartItemCount = computed(() => 
     cart.value.reduce((total, item) => total + item.quantity, 0)
   )
@@ -21,18 +16,6 @@ export const useShopStore = defineStore('shop', () => {
   const totalCartPrice = computed(() => 
     cart.value.reduce((total, item) => total + item.price * item.quantity, 0)
   )
-
-  const currentViewName = computed(() => currentRouteName.value)
-
-  const currentProduct = computed(() => {
-    if (currentRouteName.value === 'product-detail') {
-      const idParam = currentRouteParams.value.id
-      if (idParam) {
-        return getProductById(Number(idParam)) ?? null
-      }
-    }
-    return null
-  })
 
   // Actions
   async function loadProducts() {
@@ -83,30 +66,20 @@ export const useShopStore = defineStore('shop', () => {
     return products.value.find(product => product.id === id)
   }
 
-  function setCurrentRoute(name: string, params: Record<string, string> = {}) {
-    currentRouteName.value = name
-    currentRouteParams.value = params
-  }
-
   return {
     // State
     products,
     cart,
-    currentView,
     error,
     // Getters
-    currentProducts,
     cartItemCount,
     totalCartPrice,
-    currentViewName,
-    currentProduct,
     // Actions
     loadProducts,
     addToCart,
     updateCartItemQuantity,
     removeFromCart,
     getProductById,
-    setCurrentRoute,
   }
 })
 
