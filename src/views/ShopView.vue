@@ -26,6 +26,11 @@ onMounted(() => {
   <div class="app-root">
     <ShopHeader :cart-count="shop.cartItemCount" />
     <main>
+      <!-- Error Message -->
+      <div v-if="shop.error" class="error-message">
+        <p>{{ shop.error }}</p>
+      </div>
+
       <!-- Products View -->
       <ProductList 
         v-if="route.name === 'products'"
@@ -51,3 +56,15 @@ onMounted(() => {
     </main>
   </div>
 </template>
+
+<style scoped>
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  border-radius: 4px;
+  border: 1px solid #f5c6cb;
+}
+</style>

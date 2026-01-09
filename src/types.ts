@@ -10,14 +10,10 @@
      quantity: number;
    }
 
-   export type ViewName = 'products' | 'cart';
+  //  export type ViewName = 'products' | 'cart';
 
-   export interface AppState {
-     products: Product[];
-     cart: CartItem[];
-     currentView: ViewName;
-      error: string | null;
-   }
-   export interface ErrorState {
-      error: string | null;
-    }
+  //  export interface AppState {
+  //    products: Product[];
+  //    cart: CartItem[];
+  //    currentView: ViewName;
+  //  }
