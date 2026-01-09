@@ -22,7 +22,8 @@ function handlerAddToCart(product: Product) {
     <ShopHeader />
     <main>
       <ProductList :products="shop.products" 
-      @add-to-cart="handlerAddToCart" />
+      @add-to-cart="handlerAddToCart"
+      />
     </main>
   </div>
 </template>

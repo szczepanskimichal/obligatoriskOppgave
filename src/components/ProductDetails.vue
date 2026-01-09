@@ -16,7 +16,7 @@ onMounted(() => {
 });
 
 const product = computed <Product | null>(() => {
-  const idParam = route.params.id as string;
+  const idParam = route.params.id as string;  // husk om dette!!!
   return shop.products.find(p => String(p.id) === idParam) ?? null;
 });
 
@@ -25,7 +25,8 @@ const emit = defineEmits<{
 }>();
 
 function handlerAddToCart(product: Product) {
- emit('add-to-cart', product);
+// emit("add-to-cart", product);
+shop.addToCart(product);
  console.log('Aktualt produkt lagt til i handlevogn:', shop.cart);
 }
 
