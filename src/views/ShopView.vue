@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
 import ProductList from '../components/ProductList.vue';
-import ShopHeader from '../components/ShopHeader.vue';
 import { useShopStore } from '../stores/shop';
 import type { Product } from '../types';
+import ShopHeader from '../components/ShopHeader.vue';
 
 const shop = useShopStore();
 
@@ -20,7 +20,6 @@ function handlerAddToCart(product: Product) {
 <template>
   <div class="app-root">
     <ShopHeader />
-
     <main>
       <ProductList :products="shop.products" 
       @add-to-cart="handlerAddToCart" />

@@ -8,5 +8,6 @@ export default defineConfig({
   plugins: [
     vue(),
     // createHtmlPlugin(), 
-    // vueDevTools()],
+    // vueDevTools()
+  ],
 })

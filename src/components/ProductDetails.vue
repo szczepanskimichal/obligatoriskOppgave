@@ -3,6 +3,7 @@ import { computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useShopStore } from '../stores/shop';
 import type { Product } from '../types';
+import ShopHeader from './ShopHeader.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -14,16 +15,26 @@ onMounted(() => {
   }
 });
 
-const product = computed<Product | null>(() => {
+const product = computed <Product | null>(() => {
   const idParam = route.params.id as string;
   return shop.products.find(p => String(p.id) === idParam) ?? null;
 });
+
+const emit = defineEmits<{
+  (e: 'add-to-cart', product: Product): void;
+}>();
+
+function handlerAddToCart(product: Product) {
+ emit('add-to-cart', product);
+ console.log('Aktualt produkt lagt til i handlevogn:', shop.cart);
+}
 
 function goBack() {
   router.push('/');
 }
 </script>
 <template>
+  <ShopHeader />
   <section v-if="!product" class="container not-found">
     <p>Produktet ble ikke funnet.</p>
     <button class="btn" @click="goBack">Tilbake til produkter</button>
@@ -40,7 +51,7 @@ function goBack() {
         <p>Dette er en fantastisk {{ product.name.toLowerCase() }}.</p>
       </div>
       <div class="actions">
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" @click="handlerAddToCart(product)">
           Legg i handlevogn
         </button>
         <button class="btn btn-secondary" @click="goBack">
