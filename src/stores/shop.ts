@@ -1,13 +1,34 @@
 import { defineStore } from "pinia"
 import { ref, computed, watch } from 'vue'
 import type { CartItem, Product } from "../types"
-import { storageService } from '../services/storageService'
-import { productService } from '../services/productService'
+
+const CART_STORAGE_KEY = 'shop_cart'
 
 export const useShopStore = defineStore('shop', () => {
+  // Helper functions for localStorage
+  const loadCart = (): CartItem[] => {
+    try {
+      const stored = localStorage.getItem(CART_STORAGE_KEY)
+      if (stored) {
+        return JSON.parse(stored) as CartItem[]
+      }
+    } catch (error) {
+      console.error('Failed to load cart from localStorage:', error)
+    }
+    return []
+  }
+
+  const saveCart = (cart: CartItem[]): void => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart))
+    } catch (error) {
+      console.error('Failed to save cart to localStorage:', error)
+    }
+  }
+
   // State
   const products = ref<Product[]>([])
-  const cart = ref<CartItem[]>(storageService.loadCart())
+  const cart = ref<CartItem[]>(loadCart())
   const currentView = ref<'products' | 'cart'>('products')
   const error = ref<string | null>(null)
   const currentRouteName = ref<string>('products')
@@ -15,7 +36,7 @@ export const useShopStore = defineStore('shop', () => {
 
   // Watch cart and save to localStorage
   watch(cart, (newCart) => {
-    storageService.saveCart(newCart)
+    saveCart(newCart)
   }, { deep: true })
 
   // Getters
@@ -44,11 +65,20 @@ export const useShopStore = defineStore('shop', () => {
   // Actions
   async function loadProducts() {
     try {
-      const data = await productService.fetchProducts()
+      const response = await fetch('/products.json')
+      
+      if (!response.ok) {
+        throw new Error(
+          `Failed to load products: ${response.status} ${response.statusText}`
+        )
+      }
+      
+      const data: Product[] = await response.json()
       products.value = data
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err)
       error.value = message
+      console.error('Error loading products:', message)
     }
   }
 
@@ -78,7 +108,7 @@ export const useShopStore = defineStore('shop', () => {
   }
 
   function getProductById(id: number): Product | undefined {
-    return productService.findProductById(products.value, id)
+    return products.value.find(product => product.id === id)
   }
 
   function setCurrentRoute(name: string, params: Record<string, string> = {}) {
