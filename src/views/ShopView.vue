@@ -26,19 +26,14 @@ onMounted(() => {
   <div class="app-root">
     <ShopHeader :cart-count="shop.cartItemCount" />
     <main>
-      <!-- Error Message -->
       <div v-if="shop.error" class="error-message">
         <p>{{ shop.error }}</p>
       </div>
-
-      <!-- Products View -->
       <ProductList 
         v-if="route.name === 'products'"
         :products="shop.products" 
         @add-to-cart="shop.addToCart"
       />
-
-      <!-- Cart View -->
       <Cart 
         v-else-if="route.name === 'cart'"
         :items="shop.cart" 
@@ -46,8 +41,6 @@ onMounted(() => {
         @update-quantity="shop.updateCartItemQuantity"
         @remove-item="shop.removeFromCart"
       />
-
-      <!-- Product Details View -->
       <ProductDetails 
         v-else-if="route.name === 'product-detail'"
         :product="currentProduct"

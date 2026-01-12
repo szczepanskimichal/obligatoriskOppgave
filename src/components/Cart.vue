@@ -126,7 +126,7 @@ a:hover {
   padding: 0.25rem;
 }
 
-/* Remove arrows from number input */
+/* Remove arrows from input !!!*/
 .quantity-input::-webkit-outer-spin-button,
 .quantity-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
